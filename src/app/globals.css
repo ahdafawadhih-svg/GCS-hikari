@@ -20,80 +20,102 @@
 @import "@fontsource/jetbrains-mono/600.css";
 
 @theme {
-  --color-bg-primary: var(--alt-bg-primary);
-  --color-bg-secondary: var(--alt-bg-secondary);
-  --color-bg-tertiary: var(--alt-bg-tertiary);
-  --color-text-primary: var(--alt-text-primary);
-  --color-text-secondary: var(--alt-text-secondary);
-  --color-text-tertiary: var(--alt-text-tertiary);
-  --color-accent-primary: var(--alt-accent-primary);
-  --color-accent-primary-hover: var(--alt-accent-primary-hover);
-  --color-accent-secondary: var(--alt-accent-secondary);
-  --color-border-default: var(--alt-border-default);
-  --color-border-strong: var(--alt-border-strong);
-  --color-status-success: var(--alt-status-success);
-  --color-status-warning: var(--alt-status-warning);
-  --color-status-error: var(--alt-status-error);
-  --color-gcs-hud-green: var(--gcs-hud-green);
-  --color-gcs-armed: var(--gcs-armed);
-  --color-gcs-disarmed: var(--gcs-disarmed);
+  --color-bg-primary: var(--color-background);
+  --color-bg-secondary: var(--color-surface);
+  --color-bg-tertiary: var(--color-surface-2);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-secondary);
+  --color-accent-primary: var(--color-primary);
+  --color-accent-primary-hover: var(--color-primary);
+  --color-accent-secondary: var(--color-secondary);
+  --color-border-default: var(--color-border);
+  --color-border-strong: var(--color-border);
+  --color-status-success: var(--color-success);
+  --color-status-warning: var(--color-warning);
+  --color-status-error: var(--color-danger);
+  --color-gcs-hud-green: var(--color-success);
+  --color-gcs-armed: var(--color-danger);
+  --color-gcs-disarmed: var(--color-success);
   --font-display: "Space Grotesk", sans-serif;
   --font-body: var(--font-geist-sans), "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 }
 
 :root {
-  /* Background */
-  --alt-bg-primary: #020617; /* Darker navy */
-  --alt-bg-secondary: #0f172a; /* Lighter navy for panels */
-  --alt-bg-tertiary: #1e293b;
+  /* ═════════════════════════════════════════════════════════
+     SWARNAKASA MISSION CONTROL - Color Tokens
+     ═════════════════════════════════════════════════════════ */
+
+  /* Primary Colors */
+  --color-primary: #F5A800;           /* Gold - primary accent */
+  --color-secondary: #1A2B5F;         /* Navy Blue - secondary accent */
+
+  /* Background & Surfaces */
+  --color-background: #0A0C14;        /* Deep dark aerospace background */
+  --color-surface: #111827;           /* Dark card/panel surface */
+  --color-surface-2: #1C2333;         /* Slightly lighter surface for nested */
+
+  /* Borders */
+  --color-border: #2A3A5C;            /* Subtle navy border */
 
   /* Text */
-  --alt-text-primary: #fafafa;
-  --alt-text-secondary: #94a3b8;
-  --alt-text-tertiary: #64748b;
+  --color-text-primary: #F0F4FF;      /* Off-white for readability */
+  --color-text-secondary: #8A9CC0;    /* Muted blue-grey for secondary text */
 
-  /* Accent */
-  --alt-accent-primary: #00d1ff;
-  --alt-accent-primary-hover: #33e0ff;
-  --alt-accent-secondary: #dff140;
+  /* Status Colors */
+  --color-success: #00D68F;           /* Green for good status */
+  --color-warning: #F5A800;           /* Gold for warning (doubles as warning) */
+  --color-danger: #FF3B3B;            /* Red for critical alerts */
 
-  /* Border */
-  --alt-border-default: #1a1a1a;
-  --alt-border-strong: #2a2a2a;
+  /* Protocol-Specific Colors */
+  --color-lora: #00AAFF;              /* Blue for LoRa protocol */
+  --color-elrs: #AA44FF;              /* Purple for ELRS protocol */
+  --color-gsm: #FF8C00;               /* Orange for 4G/GSM protocol */
 
-  /* Status */
-  --alt-status-success: #22c55e;
-  --alt-status-warning: #f59e0b;
-  --alt-status-error: #ef4444;
+  /* GCS-specific (maintained for compatibility) */
+  --gcs-hud-green: #00D68F;
+  --gcs-hud-bg: rgba(10, 12, 20, 0.8);
+  --gcs-armed: #FF3B3B;
+  --gcs-disarmed: #00D68F;
 
-  /* GCS-specific */
-  --gcs-hud-green: #00ff41;
-  --gcs-hud-bg: rgba(0, 0, 0, 0.6);
-  --gcs-armed: #ef4444;
-  --gcs-disarmed: #22c55e;
+  /* Derive legacy color tokens from Swarnakasa palette */
+  --alt-bg-primary: var(--color-background);
+  --alt-bg-secondary: var(--color-surface);
+  --alt-bg-tertiary: var(--color-surface-2);
+  --alt-text-primary: var(--color-text-primary);
+  --alt-text-secondary: var(--color-text-secondary);
+  --alt-text-tertiary: var(--color-text-secondary);
+  --alt-accent-primary: var(--color-primary);
+  --alt-accent-primary-hover: #FFB84D;
+  --alt-accent-secondary: var(--color-secondary);
+  --alt-border-default: var(--color-border);
+  --alt-border-strong: #3D4F6E;
+  --alt-status-success: var(--color-success);
+  --alt-status-warning: var(--color-warning);
+  --alt-status-error: var(--color-danger);
 }
 
 html[data-theme="light"] {
-  --alt-bg-primary: #f7f9fc;
-  --alt-bg-secondary: #eef2f8;
-  --alt-bg-tertiary: #e2e8f2;
+  --color-primary: #E89500;
+  --color-secondary: #2A3F7F;
+  --color-background: #F5F7FA;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F0F2F5;
+  --color-border: #D0D8E8;
+  --color-text-primary: #1A1F35;
+  --color-text-secondary: #555A6F;
 
-  --alt-text-primary: #111827;
-  --alt-text-secondary: #334155;
-  --alt-text-tertiary: #64748b;
-
-  --alt-accent-primary: #2f6feb;
-  --alt-accent-primary-hover: #4b82ef;
-  --alt-accent-secondary: #8ba000;
-
-  --alt-border-default: #d6dce8;
-  --alt-border-strong: #bec9da;
-
-  --gcs-hud-green: #22c55e;
-  --gcs-armed: #ef4444;
-  --gcs-disarmed: #22c55e;
-  --gcs-hud-bg: rgba(255, 255, 255, 0.7);
+  --alt-bg-primary: var(--color-background);
+  --alt-bg-secondary: var(--color-surface);
+  --alt-bg-tertiary: var(--color-surface-2);
+  --alt-text-primary: var(--color-text-primary);
+  --alt-text-secondary: var(--color-text-secondary);
+  --alt-accent-primary: var(--color-primary);
+  --alt-accent-primary-hover: #FFB84D;
+  --alt-accent-secondary: var(--color-secondary);
+  --alt-border-default: var(--color-border);
+  --alt-border-strong: #BCC5D8;
 }
 
 html[data-theme="solarized-dark"] {
@@ -101,18 +123,14 @@ html[data-theme="solarized-dark"] {
   --alt-bg-primary: #002b36;
   --alt-bg-secondary: #073642;
   --alt-bg-tertiary: #586e75;
-
   --alt-text-primary: #eee8d5;
   --alt-text-secondary: #93a1a1;
   --alt-text-tertiary: #839496;
-
   --alt-accent-primary: #268bd2;
   --alt-accent-primary-hover: #2aa1de;
   --alt-accent-secondary: #b58900;
-
   --alt-border-default: #073642;
   --alt-border-strong: #586e75;
-
   --gcs-hud-green: #268bd2;
   --gcs-armed: #dc322f;
   --gcs-disarmed: #859900;
@@ -124,18 +142,14 @@ html[data-theme="solarized-light"] {
   --alt-bg-primary: #fdf6e3;
   --alt-bg-secondary: #eee8d5;
   --alt-bg-tertiary: #d6d0c8;
-
   --alt-text-primary: #002b36;
   --alt-text-secondary: #657b83;
   --alt-text-tertiary: #839496;
-
   --alt-accent-primary: #268bd2;
   --alt-accent-primary-hover: #2aa1de;
   --alt-accent-secondary: #b58900;
-
   --alt-border-default: #eee8d5;
   --alt-border-strong: #d6d0c8;
-
   --gcs-hud-green: #268bd2;
   --gcs-armed: #dc322f;
   --gcs-disarmed: #859900;
@@ -527,8 +541,8 @@ html[data-theme="everforest-dark"] {
 }
 
 html {
-  background-color: var(--alt-bg-primary);
-  color: var(--alt-text-primary);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
   font-family: var(--font-body);
 }
 
@@ -559,22 +573,22 @@ input, select, textarea {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--alt-bg-secondary);
+  background: var(--color-surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--alt-border-strong);
+  background: var(--color-border);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--alt-text-tertiary);
+  background: var(--color-text-secondary);
 }
 
 /* Selection */
 ::selection {
-  background-color: var(--alt-accent-primary);
-  color: var(--alt-text-primary);
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
 }
 
 /* GCS marker pulse — GPU-composited (transform+opacity on compositor thread) */
@@ -590,6 +604,13 @@ input, select, textarea {
   50% { opacity: 1; }
   75% { opacity: 0.6; }
   100% { opacity: 1; }
+}
+
+/* Protocol switch pulse animation - gold highlight */
+@keyframes protocol-pulse {
+  0% { box-shadow: 0 0 0 0 var(--color-primary); }
+  70% { box-shadow: 0 0 0 10px rgba(245, 168, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 168, 0, 0); }
 }
 
 /* Reboot banner fade-out */
@@ -611,10 +632,43 @@ input, select, textarea {
 }
 
 /* Changelog markdown body */
-.changelog-body strong { font-weight: 600; color: var(--alt-text-primary); }
+.changelog-body strong { font-weight: 600; color: var(--color-text-primary); }
 .changelog-body ul, .changelog-body ol { padding-left: 1.25rem; margin: 0.375rem 0; }
 .changelog-body li { list-style: disc; margin: 0.25rem 0; }
-.changelog-body code { font-family: var(--font-mono); background: var(--alt-bg-tertiary); padding: 0.125rem 0.25rem; border-radius: 2px; font-size: 0.9em; }
-.changelog-body a { color: var(--alt-accent-primary); text-decoration: underline; }
+.changelog-body code { font-family: var(--font-mono); background: var(--color-surface); padding: 0.125rem 0.25rem; border-radius: 2px; font-size: 0.9em; }
+.changelog-body a { color: var(--color-primary); text-decoration: underline; }
 .changelog-body p { margin: 0.375rem 0; }
-.changelog-body h3, .changelog-body h4 { font-weight: 600; color: var(--alt-text-primary); margin-top: 0.75rem; }
+.changelog-body h3, .changelog-body h4 { font-weight: 600; color: var(--color-text-primary); margin-top: 0.75rem; }
+
+/* Telemetry number displays - monospace font */
+.telemetry-number,
+.telemetry-value,
+.heading-display,
+.altitude-display,
+.speed-display,
+.rssi-display {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+
+/* Protocol status indicators */
+.protocol-active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.protocol-standby {
+  color: var(--color-secondary);
+  opacity: 0.7;
+}
+
+.protocol-disconnected {
+  color: var(--color-danger);
+  opacity: 0.6;
+}
+
+/* Protocol-specific accent colors */
+.protocol-lora { color: var(--color-lora); }
+.protocol-elrs { color: var(--color-elrs); }
+.protocol-gsm { color: var(--color-gsm); }
