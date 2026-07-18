@@ -14,7 +14,7 @@ import { BackButton } from "./BackButton";
 
 interface Props {
   next: () => void;
-  back: () => void;
+  back?: () => void;
   dotStep: number;
   totalSteps: number;
 }
@@ -24,7 +24,7 @@ export function IntroStep({ next, back, dotStep, totalSteps }: Props) {
 
   return (
     <>
-      <BackButton onClick={back} />
+      {back && <BackButton onClick={back} />}
 
       {/* Left: brand lockup */}
       <div className="flex-none md:w-2/5 flex flex-col items-center justify-center p-8 pt-14 sm:p-10 md:p-16 border-b md:border-b-0 md:border-e border-border-default">

@@ -23,6 +23,9 @@ import { cn } from "@/lib/utils";
 
 export function ActionsPanel() {
   const t = useTranslations("flight");
+  const selectedDroneId = useDroneManager((s) => s.selectedDroneId);
+  const isConnected = useDroneManager((s) => selectedDroneId ? s.drones.has(selectedDroneId) : false);
+
   const armState = useDroneStore((s) => s.armState);
   const flightMode = useDroneStore((s) => s.flightMode);
   const previousMode = useDroneStore((s) => s.previousMode);
@@ -71,7 +74,7 @@ export function ActionsPanel() {
 
   return (
     <>
-      <div className="px-3 pt-3 pb-1.5 bg-transparent flex flex-col gap-1.5">
+      <div className={cn("px-3 pt-3 pb-1.5 bg-transparent flex flex-col gap-1.5 transition-opacity duration-200", !isConnected && "opacity-50 pointer-events-none")}>
         {/* Loadout selector (battery + equipment fitted for this flight) */}
         <LoadoutSelector />
 

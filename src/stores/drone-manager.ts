@@ -128,12 +128,12 @@ export const useDroneManager = create<DroneManagerState>((set, get) => ({
     });
 
     // Background bulk param download — seeds paramCache for instant panel reads
-    protocol.getAllParameters().catch(() => {});
+    protocol.getAllParameters().catch(() => { });
 
     // Auto-select if this is the first drone
-    if (get().drones.size === 1) {
-      get().selectDrone(id);
-    }
+    // if (get().drones.size === 1) {
+    //   get().selectDrone(id);
+    // }
 
     // Auto-start recording if enabled in settings
     if (useSettingsStore.getState().autoRecordOnConnect) {

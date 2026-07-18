@@ -810,7 +810,8 @@
     "deleteDrone": "Hapus Drone",
     "deleteConfirm": "Hapus drone ini dari armada Anda? Data koneksi akan hilang.",
     "delete": "Hapus",
-    "backToDashboard": "Kembali ke Dasbor"
+    "backToDashboard": "Kembali ke Dasbor",
+    "noDroneSelected": "Tidak Ada Drone Terpilih"
   },
   "droneRadio": {
     "airSideBadge": "Air side",

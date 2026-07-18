@@ -810,7 +810,8 @@
     "deleteDrone": "Delete Drone",
     "deleteConfirm": "Remove this drone from your fleet? Connection data will be lost.",
     "delete": "Delete",
-    "backToDashboard": "Back to Dashboard"
+    "backToDashboard": "Back to Dashboard",
+    "noDroneSelected": "No Drone Selected"
   },
   "droneRadio": {
     "airSideBadge": "Air side",

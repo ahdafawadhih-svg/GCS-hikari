@@ -150,10 +150,10 @@ function CommandShellInner({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col h-dvh">
       {/* Welcome onboarding modal */}
-      <WelcomeModal />
+      {/* <WelcomeModal /> */}
 
       {/* Disclaimer gate for existing users who haven't accepted yet */}
-      <DisclaimerGate />
+      {/* <DisclaimerGate /> */}
 
       {/* Changelog "What's New" notification modal */}
       <ChangelogNotificationGate />

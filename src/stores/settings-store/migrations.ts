@@ -165,9 +165,9 @@ export function migrateSettings(
   }
   if (version < 29) {
     // v29: legal disclaimer acceptance tracking
-    state.disclaimerAccepted = false;
+    state.disclaimerAccepted = true;
     state.disclaimerAcceptedAt = null;
-    state.disclaimerVersion = 0;
+    state.disclaimerVersion = 1;
   }
   if (version < 30) {
     // v30: auto-record on arm

@@ -35,12 +35,12 @@ describe("computeStepX", () => {
 
   it("parks future panes off to the right when moving forward", () => {
     expect(computeStepX(3, 2, "forward")).toBe("translate-x-full");
-    expect(computeStepX(6, 2, "forward")).toBe("translate-x-full");
+    expect(computeStepX(5, 2, "forward")).toBe("translate-x-full");
   });
 
   it("parks future panes off to the left when moving back", () => {
     expect(computeStepX(3, 2, "back")).toBe("-translate-x-full");
-    expect(computeStepX(6, 2, "back")).toBe("-translate-x-full");
+    expect(computeStepX(5, 2, "back")).toBe("-translate-x-full");
   });
 });
 
@@ -48,45 +48,45 @@ describe("computeDotStep", () => {
   it("passes the step through unchanged when the download step is shown", () => {
     expect(computeDotStep(0, false)).toBe(0);
     expect(computeDotStep(3, false)).toBe(3);
+    expect(computeDotStep(4, false)).toBe(4);
     expect(computeDotStep(5, false)).toBe(5);
-    expect(computeDotStep(6, false)).toBe(6);
   });
 
-  it("collapses step 6 down to dot index 5 when the download step is skipped", () => {
-    expect(computeDotStep(6, true)).toBe(5);
+  it("collapses step 5 down to dot index 4 when the download step is skipped", () => {
+    expect(computeDotStep(5, true)).toBe(4);
   });
 
-  it("does not remap steps at or below 5 when the download step is skipped", () => {
+  it("does not remap steps at or below 4 when the download step is skipped", () => {
     expect(computeDotStep(0, true)).toBe(0);
+    expect(computeDotStep(3, true)).toBe(3);
     expect(computeDotStep(4, true)).toBe(4);
-    expect(computeDotStep(5, true)).toBe(5);
   });
 });
 
 describe("computeTotalSteps", () => {
-  it("returns 7 in browser mode", () => {
-    expect(computeTotalSteps(false)).toBe(7);
+  it("returns 6 in browser mode", () => {
+    expect(computeTotalSteps(false)).toBe(6);
   });
 
-  it("returns 6 in Electron mode (no desktop download step)", () => {
-    expect(computeTotalSteps(true)).toBe(6);
+  it("returns 5 in Electron mode (no desktop download step)", () => {
+    expect(computeTotalSteps(true)).toBe(5);
   });
 });
 
 describe("computeAfterTheme and computeBeforeReady", () => {
-  it("targets step 5 (download) after theme in browser mode", () => {
-    expect(computeAfterTheme(false)).toBe(5);
+  it("targets step 4 (download) after theme in browser mode", () => {
+    expect(computeAfterTheme(false)).toBe(4);
   });
 
-  it("targets step 6 (ready) after theme in Electron mode", () => {
-    expect(computeAfterTheme(true)).toBe(6);
+  it("targets step 5 (ready) after theme in Electron mode", () => {
+    expect(computeAfterTheme(true)).toBe(5);
   });
 
   it("backs from ready into the download step in browser mode", () => {
-    expect(computeBeforeReady(false)).toBe(5);
+    expect(computeBeforeReady(false)).toBe(4);
   });
 
   it("backs from ready into the theme step in Electron mode", () => {
-    expect(computeBeforeReady(true)).toBe(4);
+    expect(computeBeforeReady(true)).toBe(3);
   });
 });

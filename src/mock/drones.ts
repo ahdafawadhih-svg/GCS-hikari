@@ -19,7 +19,7 @@ export interface DemoDroneConfig {
 }
 
 /**
- * 5 demo drones in Bangalore area (HAL Airport / Whitefield).
+ * 5 demo drones in itera area 
  */
 export const DEMO_DRONES: DemoDroneConfig[] = [
   {
@@ -31,7 +31,7 @@ export const DEMO_DRONES: DemoDroneConfig[] = [
     homeLon: 105.315,
     homeAlt: 0,
     batteryStart: 82,
-    pathIndex: -1,
+    pathIndex: 0,
     healthScore: 95,
     hasAgent: true,
   },

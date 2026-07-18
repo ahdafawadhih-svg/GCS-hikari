@@ -51,6 +51,11 @@ export const useSettingsStore = create<SettingsStoreState>()(
         state._hasHydrated = true;
         const envDemo = isDemoMode();
         if (state.demoMode !== envDemo) state.demoMode = envDemo;
+        if (process.env.NODE_ENV !== "production" || envDemo) {
+          state.onboarded = true;
+          state.disclaimerAccepted = true;
+          state.disclaimerVersion = 1;
+        }
       },
     },
   ),

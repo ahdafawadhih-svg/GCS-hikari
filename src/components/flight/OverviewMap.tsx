@@ -83,14 +83,14 @@ const STATUS_COLORS: Record<string, string> = {
   offline: "#666666",
 };
 
-/** SVG arrow icon for the drone marker, rotated by heading. */
+/** SVG icon for the drone marker, rotated by heading. */
 function createDroneIcon(heading: number, color = "#00ff41", size = 24): L.DivIcon {
   return L.divIcon({
     className: "",
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
-    html: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="transform:rotate(${heading}deg)">
-      <polygon points="12,2 20,20 12,16 4,20" fill="${color}" fill-opacity="0.9" stroke="${color}" stroke-width="1"/>
+    html: `<svg width="${size}" height="${size}" viewBox="0 -0.5 25 25" style="transform:rotate(${heading}deg)" xmlns="http://www.w3.org/2000/svg">
+      <path d="m24.794 16.522-.281-2.748-10.191-5.131s.091-1.742 0-4.31c-.109-1.68-.786-3.184-1.839-4.339l.005.006h-.182c-1.048 1.15-1.726 2.653-1.834 4.312l-.001.021c-.091 2.567 0 4.31 0 4.31l-10.19 5.131-.281 2.748 6.889-2.074 3.491-.582c-.02.361-.031.783-.031 1.208 0 2.051.266 4.041.764 5.935l-.036-.162-2.728 1.095v1.798l3.52-.8c.155.312.3.566.456.812l-.021-.035v.282c.032-.046.062-.096.093-.143.032.046.061.096.094.143v-.282c.135-.21.28-.464.412-.726l.023-.051 3.52.8v-1.798l-2.728-1.095c.463-1.733.728-3.723.728-5.774 0-.425-.011-.847-.034-1.266l.003.058 3.492.582 6.888 2.074z" fill="${color}" stroke="#000" stroke-width="0.5" opacity="0.9"/>
     </svg>`,
   });
 }
@@ -236,7 +236,7 @@ export function OverviewMap() {
     pos && pos.lat !== 0 && pos.lon !== 0 ? [pos.lat, pos.lon] : null;
 
   const heading = pos?.heading ?? 0;
-  const droneIcon = useMemo(() => createDroneIcon(heading, "#00ff41", 24), [heading]);
+  const droneIcon = useMemo(() => createDroneIcon(heading, "#00ff41"), [heading]);
 
   // Home position = first trail point
   const homePos: [number, number] | null =
@@ -412,11 +412,10 @@ export function OverviewMap() {
               else setFlightMode("AUTO");
             }
           }}
-          className={`absolute top-2 right-2 z-[1000] flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-semibold border rounded backdrop-blur-md shadow-lg transition-colors ${
-            isAutoMode
+          className={`absolute top-2 right-2 z-[1000] flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-semibold border rounded backdrop-blur-md shadow-lg transition-colors ${isAutoMode
               ? "border-yellow-400 text-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20"
               : "border-status-success text-status-success bg-status-success/10 hover:bg-status-success/20"
-          }`}
+            }`}
         >
           {isAutoMode ? <Pause size={12} /> : <Play size={12} />}
           {isAutoMode ? "PAUSE" : "RESUME"}
@@ -429,11 +428,10 @@ export function OverviewMap() {
           onClick={() => {
             setMeasureActive((v) => !v);
           }}
-          className={`text-[10px] font-mono px-2 py-1 transition-colors flex items-center gap-1 rounded ${
-            measureActive
+          className={`text-[10px] font-mono px-2 py-1 transition-colors flex items-center gap-1 rounded ${measureActive
               ? "text-[#3A82FF] bg-[#3A82FF]/10"
               : "text-text-secondary hover:text-text-primary"
-          }`}
+            }`}
           title="Measure distance and bearing (click points, double-click to finish)"
         >
           <Ruler size={10} />
@@ -441,21 +439,19 @@ export function OverviewMap() {
         </button>
         <button
           onClick={() => setShowPlannedPath((v) => !v)}
-          className={`text-[10px] font-mono px-2 py-1 transition-colors rounded ${
-            showPlannedPath
+          className={`text-[10px] font-mono px-2 py-1 transition-colors rounded ${showPlannedPath
               ? "text-[#3A82FF] bg-[#3A82FF]/10"
               : "text-text-secondary hover:text-text-primary"
-          }`}
+            }`}
         >
           PLAN
         </button>
         <button
           onClick={() => setFollow((f) => !f)}
-          className={`text-[10px] font-mono px-2 py-1 transition-colors rounded ${
-            follow
+          className={`text-[10px] font-mono px-2 py-1 transition-colors rounded ${follow
               ? "text-[#3A82FF] bg-[#3A82FF]/10"
               : "text-text-secondary hover:text-text-primary"
-          }`}
+            }`}
         >
           {follow ? "FOLLOW" : "FREE"}
         </button>
