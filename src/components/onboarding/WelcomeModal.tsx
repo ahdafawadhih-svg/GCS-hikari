@@ -30,8 +30,7 @@ import {
 import { useGcsLocationStore, type GeoPermission } from "@/stores/gcs-location-store";
 import { type Jurisdiction } from "@/lib/jurisdiction";
 import type { UnitSystem, ThemeMode } from "@/stores/settings-store";
-import { THEME_CARDS, detectBrowserLocale } from "./constants";
-import { LanguageStep } from "./steps/LanguageStep";
+import { THEME_CARDS } from "./constants";
 import { IntroStep } from "./steps/IntroStep";
 import { DisclaimerStep } from "./steps/DisclaimerStep";
 import { PreferencesStep } from "./steps/PreferencesStep";
@@ -67,8 +66,7 @@ export function WelcomeModal() {
   const [step, setStep] = useState<Step>(0);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
 
-  // Step 1: selected locale
-  const [selectedLocale, setSelectedLocale] = useState<string>(() => detectBrowserLocale());
+
 
   // Step 2: disclaimer acceptance
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
@@ -200,22 +198,22 @@ export function WelcomeModal() {
       aria-label="Welcome setup"
     >
       <div className="relative w-full h-full">
-        {/* Step 0: Language */}
-        <div className={`${baseStepClass} ${stepX(0)}`}>
-          <LanguageStep
-            selectedLocale={selectedLocale}
-            onLocaleChange={setSelectedLocale}
+        {/* Step 0: Intro / Brand */}
+        <div
+          className={`absolute inset-0 flex flex-col md:flex-row overflow-y-auto transition-transform duration-300 ease-in-out ${stepX(0)}`}
+        >
+          <IntroStep
             next={() => advance(1)}
             dotStep={dotStep}
             totalSteps={totalSteps}
           />
         </div>
 
-        {/* Step 1: Intro / Brand */}
-        <div
-          className={`absolute inset-0 flex flex-col md:flex-row overflow-y-auto transition-transform duration-300 ease-in-out ${stepX(1)}`}
-        >
-          <IntroStep
+        {/* Step 1: Disclaimer */}
+        <div className={`${baseStepClass} ${stepX(1)}`}>
+          <DisclaimerStep
+            checked={disclaimerChecked}
+            onChange={setDisclaimerChecked}
             next={() => advance(2)}
             back={() => back(0)}
             dotStep={dotStep}
@@ -223,20 +221,8 @@ export function WelcomeModal() {
           />
         </div>
 
-        {/* Step 2: Disclaimer */}
+        {/* Step 2: Preferences */}
         <div className={`${baseStepClass} ${stepX(2)}`}>
-          <DisclaimerStep
-            checked={disclaimerChecked}
-            onChange={setDisclaimerChecked}
-            next={() => advance(3)}
-            back={() => back(1)}
-            dotStep={dotStep}
-            totalSteps={totalSteps}
-          />
-        </div>
-
-        {/* Step 3: Preferences */}
-        <div className={`${baseStepClass} ${stepX(3)}`}>
           <PreferencesStep
             jurisdiction={jurisdiction}
             units={units}
@@ -251,16 +237,16 @@ export function WelcomeModal() {
             setDemoMode={setLocalDemoMode}
             setAudioEnabled={setLocalAudioEnabled}
             onLocationToggle={handleLocationToggle}
-            next={() => advance(4)}
-            back={() => back(2)}
+            next={() => advance(3)}
+            back={() => back(1)}
             dotStep={dotStep}
             totalSteps={totalSteps}
           />
         </div>
 
-        {/* Step 4: Theme */}
+        {/* Step 3: Theme */}
         <div
-          className={`absolute inset-0 flex flex-col items-center p-4 sm:p-6 md:p-8 pt-14 sm:pt-16 overflow-y-auto transition-transform duration-300 ease-in-out ${stepX(4)}`}
+          className={`absolute inset-0 flex flex-col items-center p-4 sm:p-6 md:p-8 pt-14 sm:pt-16 overflow-y-auto transition-transform duration-300 ease-in-out ${stepX(3)}`}
         >
           <ThemeStep
             themeOrder={themeOrder}
@@ -268,26 +254,26 @@ export function WelcomeModal() {
             onThemeTileClick={handleThemeTileClick}
             onAccentChange={setAccentColor}
             next={() => advance(afterTheme)}
-            back={() => back(3)}
+            back={() => back(2)}
             dotStep={dotStep}
             totalSteps={totalSteps}
           />
         </div>
 
-        {/* Step 5: Desktop Download (skipped in Electron) */}
+        {/* Step 4: Desktop Download (skipped in Electron) */}
         {!skipDownloadStep && (
-          <div className={`${baseStepClass} ${stepX(5)}`}>
+          <div className={`${baseStepClass} ${stepX(4)}`}>
             <DownloadStep
-              next={() => advance(6)}
-              back={() => back(4)}
+              next={() => advance(5)}
+              back={() => back(3)}
               dotStep={dotStep}
               totalSteps={totalSteps}
             />
           </div>
         )}
 
-        {/* Step 6: Ready */}
-        <div className={`${baseStepClass} ${stepX(6)}`}>
+        {/* Step 5: Ready */}
+        <div className={`${baseStepClass} ${stepX(5)}`}>
           <ReadyStep
             onFinish={handleGetStarted}
             back={() => back(beforeReady)}

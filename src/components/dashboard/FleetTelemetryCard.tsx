@@ -30,13 +30,7 @@ export function FleetTelemetryCard() {
     return { id: d.id, name, sats, fix, voltage, pct, mode: d.flightMode, armState: d.armState };
   });
 
-  if (connected.length === 0) {
-    return (
-      <Card title="Fleet Telemetry">
-        <span className="text-[11px] text-text-tertiary">No connected drones</span>
-      </Card>
-    );
-  }
+
 
   return (
     <Card title="Fleet Telemetry">
@@ -84,6 +78,11 @@ export function FleetTelemetryCard() {
             </div>
           </div>
         ))}
+        {connected.length === 0 && (
+          <span className="text-[10px] text-text-tertiary text-center py-2">
+            No connected drones
+          </span>
+        )}
       </div>
     </Card>
   );

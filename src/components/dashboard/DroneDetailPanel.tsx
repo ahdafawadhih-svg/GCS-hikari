@@ -55,10 +55,21 @@ export function DroneDetailPanel({ droneId, onClose }: DroneDetailPanelProps) {
   const visibleTab =
     activeTab === RADIO_TAB_ID && !radioPresent ? "overview" : activeTab;
 
-  const drone = drones.find((d) => d.id === droneId);
-  const metadata = useDroneMetadataStore((s) => s.profiles[droneId]);
+  const fallbackDrone = useMemo(() => ({
+    id: "offline-drone",
+    name: t("noDroneSelected", { defaultValue: "No Drone Selected" }),
+    status: "offline" as const,
+    connectionState: "disconnected" as const,
+    flightMode: "STABILIZE" as const,
+    armState: "disarmed" as const,
+    lastHeartbeat: 0,
+    healthScore: 0,
+  }), [t]);
+
+  const drone = droneId ? drones.find((d) => d.id === droneId) : fallbackDrone;
+  const metadata = useDroneMetadataStore((s) => s.profiles[droneId || ""]);
   const managedDrones = useDroneManager((s) => s.drones);
-  const isConnected = managedDrones.has(droneId);
+  const isConnected = droneId ? managedDrones.has(droneId) : false;
 
   const immersiveMode = useUiStore((s) => s.immersiveMode);
   const exitImmersiveMode = useUiStore((s) => s.exitImmersiveMode);
@@ -123,12 +134,14 @@ export function DroneDetailPanel({ droneId, onClose }: DroneDetailPanelProps) {
         <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border-default bg-bg-secondary flex-shrink-0">
           <h1 className="text-sm font-semibold text-text-primary shrink-0">{displayName}</h1>
           <DroneStatusBadge status={drone.status} />
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={<X size={14} />}
-            onClick={onClose}
-          />
+          {drone.id !== "offline-drone" && (
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<X size={14} />}
+              onClick={onClose}
+            />
+          )}
 
           <div className="w-px h-5 bg-border-default shrink-0" />
 
@@ -185,15 +198,17 @@ export function DroneDetailPanel({ droneId, onClose }: DroneDetailPanelProps) {
           </div>
 
           <span className="text-[10px] font-mono text-text-tertiary ml-auto shrink-0">
-            ID: {drone.id}
+            ID: {drone.id === "offline-drone" ? "--" : drone.id}
           </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={<Trash2 size={12} />}
-            onClick={() => setDeleteOpen(true)}
-            className="text-status-error hover:text-status-error"
-          />
+          {drone.id !== "offline-drone" && (
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<Trash2 size={12} />}
+              onClick={() => setDeleteOpen(true)}
+              className="text-status-error hover:text-status-error"
+            />
+          )}
           {isConnected && <NavStatePill />}
           {isConnected && <TrafficPill />}
           {isConnected && <ConnectionQualityMeter />}

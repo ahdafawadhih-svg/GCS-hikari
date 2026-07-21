@@ -37,7 +37,7 @@ describe("settings store slices", () => {
   describe("display slice", () => {
     it("initial state surfaces display defaults", () => {
       const s = useSettingsStore.getState();
-      expect(s.mapTileSource).toBe("satellite");
+      expect(s.mapTileSource).toBe("google_hybrid");
       expect(s.units).toBe("metric");
       expect(s.themeMode).toBe("dark");
       expect(s.accentColor).toBe("blue");

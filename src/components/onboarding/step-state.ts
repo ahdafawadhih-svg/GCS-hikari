@@ -7,7 +7,7 @@
  * @license GPL-3.0-only
  */
 
-export type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type Step = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type StepDirection = "forward" | "back";
 
@@ -28,21 +28,21 @@ export function computeStepX(i: Step, current: Step, direction: StepDirection): 
 
 /**
  * Index used by the step-dots indicator. When the desktop download step is
- * skipped (Electron build), step 6 collapses back into the dots position 5
+ * skipped (Electron build), step 5 collapses back into the dots position 4
  * so the dot count stays aligned with the visible flow.
  */
 export function computeDotStep(step: Step, skipDownloadStep: boolean): number {
-  return skipDownloadStep && step > 5 ? step - 1 : step;
+  return skipDownloadStep && step > 4 ? step - 1 : step;
 }
 
 export function computeTotalSteps(skipDownloadStep: boolean): number {
-  return skipDownloadStep ? 6 : 7;
+  return skipDownloadStep ? 5 : 6;
 }
 
 export function computeAfterTheme(skipDownloadStep: boolean): Step {
-  return skipDownloadStep ? 6 : 5;
+  return skipDownloadStep ? 5 : 4;
 }
 
 export function computeBeforeReady(skipDownloadStep: boolean): Step {
-  return skipDownloadStep ? 4 : 5;
+  return skipDownloadStep ? 3 : 4;
 }

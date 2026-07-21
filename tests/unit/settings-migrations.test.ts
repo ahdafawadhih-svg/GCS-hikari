@@ -50,8 +50,8 @@ describe("migrateSettings", () => {
     expect(result.guidanceTgtHdgEnabled).toBe(true);
     expect(result.videoWhepUrl).toBe("");
     expect(result.telemetryDeckActivePage).toBe("flight");
-    expect(result.disclaimerAccepted).toBe(false);
-    expect(result.disclaimerVersion).toBe(0);
+    expect(result.disclaimerAccepted).toBe(true);
+    expect(result.disclaimerVersion).toBe(1);
     expect(result.autoRecordOnArm).toBe(true);
     expect(result.videoTransportMode).toBe("auto");
     expect(result.hudAutoClaimPicOnFirstButton).toBe(false);
@@ -71,7 +71,7 @@ describe("migrateSettings", () => {
   it("v19 forces offlineTileCaching to false even when v16 set it to true", () => {
     const result = migrateSettings({}, 0);
     expect(result.offlineTileCaching).toBe(false);
-    expect(result.mapTileSource).toBe("satellite");
+    expect(result.mapTileSource).toBe("google_hybrid");
   });
 
   it("v22 initialises empty paramFilterPresets when missing", () => {
