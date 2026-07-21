@@ -20,7 +20,6 @@ export function LanguageSection() {
     <div>
       <div className="mb-4">
         <h3 className="text-sm font-medium text-text-primary">{t("language")}</h3>
-        <p className="text-[11px] text-text-tertiary mt-0.5">{t("languageDescription")}</p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -46,17 +45,6 @@ export function LanguageSection() {
         })}
       </div>
 
-      <p className="text-[10px] text-text-tertiary mt-3">
-        {t("languageNote")} —{" "}
-        <a
-          href="https://github.com/altnautica/ADOSMissionControl"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-accent-primary hover:underline"
-        >
-          GitHub
-        </a>
-      </p>
     </div>
   );
 }

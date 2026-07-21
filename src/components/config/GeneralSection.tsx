@@ -202,22 +202,15 @@ export function GeneralSection() {
 
       {/* Re-run Setup Wizard */}
       <Card>
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-xs text-text-secondary">{t("setupWizard")}</span>
-            <p className="text-[10px] text-text-tertiary mt-0.5">
-              {t("setupWizardDesc")}
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={<RotateCcw size={12} />}
-            onClick={() => setOnboarded(false)}
-          >
-            {t("rerun")}
-          </Button>
-        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={<RotateCcw size={12} />}
+          onClick={() => setOnboarded(false)}
+          className="w-full"
+        >
+          Reset
+        </Button>
       </Card>
     </div>
   );
