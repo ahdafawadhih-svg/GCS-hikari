@@ -61,6 +61,7 @@ interface ChecklistStoreState {
   startSession: () => void;
   resetSession: () => void;
   toggleManualItem: (id: string) => void;
+  toggleItem: (id: string) => void;
   updateAutoItem: (id: string, status: "pass" | "fail", displayValue?: string) => void;
   skipItem: (id: string) => void;
   isReadyToArm: () => boolean;
@@ -96,6 +97,18 @@ export const useChecklistStore = create<ChecklistStoreState>((set, get) => ({
     set((state) => ({
       items: state.items.map((item) => {
         if (item.id !== id || item.type !== "manual") return item;
+        return {
+          ...item,
+          status: item.status === "pass" ? "pending" : "pass",
+        };
+      }),
+    }));
+  },
+
+  toggleItem: (id) => {
+    set((state) => ({
+      items: state.items.map((item) => {
+        if (item.id !== id) return item;
         return {
           ...item,
           status: item.status === "pass" ? "pending" : "pass",

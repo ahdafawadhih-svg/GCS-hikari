@@ -80,4 +80,11 @@ describe("DroneCard", () => {
     expect(screen.getByText("Lite")).toBeDefined();
     expect(screen.getByText("LCD")).toBeDefined();
   });
+
+  it("renders with compact mode styling", () => {
+    const { container } = renderWithIntl(
+      <DroneCard drone={makeDrone()} compact />
+    );
+    expect(container.firstChild).toHaveClass("p-2");
+  });
 });

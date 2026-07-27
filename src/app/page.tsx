@@ -38,10 +38,10 @@ export default function DashboardPage() {
 
 
   return (
-    <div className="flex-1 flex h-full overflow-hidden p-2 gap-2 bg-bg-primary">
+    <div className="flex-1 flex flex-col h-full overflow-hidden p-2 gap-2 bg-bg-primary">
       <CloudDroneBridge />
       {!immersiveMode && (
-        <div className="flex shrink-0 rounded-panel border border-border-default bg-bg-secondary overflow-hidden">
+        <div className="flex-shrink-0 rounded-panel border border-border-default bg-bg-secondary overflow-hidden">
           <DroneListPanel collapsed={panelCollapsed} onToggleCollapse={() => setPanelCollapsed((p) => !p)} />
         </div>
       )}

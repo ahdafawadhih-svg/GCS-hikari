@@ -4,34 +4,70 @@ import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useFleetStore } from "@/stores/fleet-store";
 import { useDroneManager } from "@/stores/drone-manager";
-import { DroneCard } from "@/components/shared/drone-card";
-import { LinkBadgesRow } from "@/components/connect/LinkBadgesRow";
+import { useDroneMetadataStore } from "@/stores/drone-metadata-store";
 import { useConnectDialogStore } from "@/stores/connect-dialog-store";
-import { Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { StatusDot } from "@/components/ui/status-dot";
+import { Plus, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { DroneTile } from "@/components/shared/drone-tile";
+import { cn } from "@/lib/utils";
+import type { FleetDrone, DroneStatus } from "@/lib/types";
 
-function DroneListItem({
-  droneId,
+const statusToDot: Record<DroneStatus, "online" | "idle" | "warning" | "error" | "offline"> = {
+  online: "online",
+  in_mission: "online",
+  idle: "idle",
+  returning: "warning",
+  maintenance: "error",
+  offline: "offline",
+};
+
+function DroneMiniCard({
+  drone,
   selected,
-  onSelect,
-  fleetDrone,
+  onClick,
 }: {
-  droneId: string;
-  selected: boolean;
-  onSelect: (id: string) => void;
-  fleetDrone: ReturnType<typeof useFleetStore.getState>["drones"][number];
+  drone: FleetDrone;
+  selected?: boolean;
+  onClick?: (id: string) => void;
 }) {
-  const managedDrone = useDroneManager((s) => s.drones.get(droneId));
-  const linkInfo = managedDrone?.protocol.linkInfo ?? [];
+  const displayName =
+    useDroneMetadataStore((s) => s.profiles[drone.id]?.displayName) ?? drone.name;
+  const batteryPct = Math.max(0, Math.min(100, drone.battery?.remaining ?? 0));
+  const isArmed = drone.armState === "armed";
+
   return (
-    <div className="flex flex-col gap-1">
-      <DroneCard drone={fleetDrone} selected={selected} onClick={onSelect} />
-      {linkInfo.length > 0 && (
-        <div className="px-2">
-          <LinkBadgesRow droneId={droneId} links={linkInfo} />
-        </div>
+    <button
+      onClick={() => onClick?.(drone.id)}
+      title={`${displayName} — ${drone.status.replace("_", " ")} — ${batteryPct}%`}
+      className={cn(
+        "h-9 px-2.5 rounded-lg flex items-center gap-2 border transition-all cursor-pointer shrink-0 text-left",
+        "bg-bg-primary/80 hover:bg-bg-primary border-border-default hover:border-border-strong",
+        selected && "border-accent-primary bg-accent-primary/10 shadow-sm",
+        isArmed && "ring-1 ring-status-warning/50"
       )}
-    </div>
+    >
+      <StatusDot status={statusToDot[drone.status]} className="shrink-0" />
+      <div className="flex flex-col justify-center min-w-0">
+        <div className="flex items-center gap-1.5 leading-none">
+          <span className="text-xs font-semibold text-text-primary truncate max-w-[100px]">
+            {displayName}
+          </span>
+          <span
+            className={cn(
+              "text-[8px] px-1 py-0.2 rounded font-mono uppercase font-bold tracking-tight shrink-0",
+              isArmed
+                ? "bg-status-warning/20 text-status-warning"
+                : "bg-bg-tertiary text-text-tertiary"
+            )}
+          >
+            {isArmed ? "ARM" : "DISARM"}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 leading-none mt-1 text-[9px] text-text-tertiary font-mono">
+          <span>{batteryPct}%</span>
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -62,30 +98,32 @@ export function DroneListPanel({ collapsed, onToggleCollapse }: DroneListPanelPr
 
   if (collapsed) {
     return (
-      <div className="w-12 shrink-0 flex flex-col h-full border-r border-border-default bg-bg-secondary">
+      <div className="w-full flex flex-row items-center gap-3 px-3 py-1.5 bg-bg-secondary h-11 border-b border-border-default shrink-0">
         {/* Header: label + add + expand */}
-        <div className="flex flex-col items-center gap-1.5 px-1 py-2 border-b border-border-default">
+        <div className="flex items-center gap-2 shrink-0">
           <span className="text-[9px] font-semibold uppercase tracking-wider text-text-tertiary">
             {t("title")}
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); openDialog(); }}
-            className="w-full aspect-square flex items-center justify-center bg-accent-primary/10 hover:bg-accent-primary transition-colors cursor-pointer group"
+            className="w-6 h-6 flex items-center justify-center bg-accent-primary/10 hover:bg-accent-primary transition-colors cursor-pointer group rounded"
             title={t("addDrone")}
           >
             <Plus size={12} className="text-accent-primary group-hover:text-bg-primary transition-colors" />
           </button>
           <button
             onClick={onToggleCollapse}
-            className="w-full aspect-square flex items-center justify-center hover:bg-bg-tertiary transition-colors cursor-pointer group"
+            className="w-6 h-6 flex items-center justify-center hover:bg-bg-tertiary transition-colors cursor-pointer group rounded"
             title={t("expandPanel")}
           >
-            <ChevronRight size={12} className="text-text-tertiary group-hover:text-text-secondary transition-colors" />
+            <ChevronDown size={12} className="text-text-tertiary group-hover:text-text-secondary transition-colors" />
           </button>
         </div>
 
+        <div className="w-px h-4 bg-border-default shrink-0" />
+
         {/* Drone tiles */}
-        <div className="flex-1 overflow-auto flex flex-col items-center gap-1 py-1.5">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden flex flex-row items-center gap-1.5 min-w-0">
           {drones.map((drone) => (
             <DroneTile
               key={drone.id}
@@ -96,8 +134,10 @@ export function DroneListPanel({ collapsed, onToggleCollapse }: DroneListPanelPr
           ))}
         </div>
 
+        <div className="w-px h-4 bg-border-default shrink-0" />
+
         {/* Count */}
-        <div className="text-center py-1 border-t border-border-default">
+        <div className="text-right shrink-0">
           <span className="text-[9px] text-text-tertiary font-mono">{drones.length}</span>
         </div>
       </div>
@@ -105,67 +145,67 @@ export function DroneListPanel({ collapsed, onToggleCollapse }: DroneListPanelPr
   }
 
   return (
-    <div className="w-64 shrink-0 flex flex-col h-full bg-transparent">
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-white/5 glass rounded-2xl mx-2 mt-2 shadow-sm shrink-0">
+    <div className="w-full flex flex-row items-center gap-3 px-3 py-1.5 bg-bg-secondary h-13 border-b border-border-default shrink-0">
+      {/* Left Header */}
+      <div className="flex items-center gap-2 shrink-0">
         <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
           {t("title")}
         </span>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={openDialog}
-            className="p-1 text-text-tertiary hover:text-text-primary transition-colors"
-          >
-            <Plus size={14} />
-          </button>
-          <button
-            onClick={onToggleCollapse}
-            className="p-1 text-text-tertiary hover:text-text-primary transition-colors"
-            title={t("collapsePanel")}
-          >
-            <ChevronLeft size={14} />
-          </button>
-        </div>
+        <span className="text-[10px] text-text-tertiary font-mono bg-bg-tertiary px-1.5 py-0.5 rounded">
+          {drones.length}
+        </span>
       </div>
 
-      {/* Search */}
-      <div className="px-2 py-2 shrink-0">
-        <div className="flex items-center gap-2 px-2 py-1.5 glass rounded-full shadow-inner">
-          <Search size={12} className="text-text-tertiary shrink-0" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("searchDrones")}
-            className="flex-1 bg-transparent text-xs text-text-primary placeholder:text-text-tertiary outline-none"
-          />
-        </div>
-      </div>
+      <div className="w-px h-5 bg-border-default shrink-0" />
 
-      {/* Drone list */}
-      <div className="flex-1 overflow-auto p-2 flex flex-col gap-3">
+      {/* Middle: Horizontal scrollable drone list */}
+      <div className="flex-1 overflow-x-auto overflow-y-hidden flex flex-row items-center gap-2 min-w-0 py-0.5">
         {filtered.map((drone) => (
-          <DroneListItem
+          <DroneMiniCard
             key={drone.id}
-            droneId={drone.id}
-            fleetDrone={drone}
+            drone={drone}
             selected={drone.id === selectedDroneId}
-            onSelect={selectDrone}
+            onClick={selectDrone}
           />
         ))}
         {filtered.length === 0 && (
-          <div className="text-xs text-text-tertiary text-center py-4">
+          <div className="text-xs text-text-tertiary py-1">
             {search ? t("noMatch") : t("noDrones")}
           </div>
         )}
       </div>
 
-      {/* Footer */}
-      <div className="px-3 py-1.5 glass rounded-full mx-2 mb-2 shadow-sm text-center">
-        <span className="text-[10px] text-text-tertiary font-mono">
-          {drones.length} {drones.length === 1 ? "drone" : "drones"}
-        </span>
-      </div>
+      <div className="w-px h-5 bg-border-default shrink-0" />
 
+      {/* Right Controls: Search bar, Add, Collapse */}
+      <div className="flex items-center gap-2 shrink-0">
+        {/* Search Bar - aligned to the right */}
+        <div className="flex items-center gap-1.5 px-2.5 py-1 glass rounded-full shadow-inner w-44">
+          <Search size={12} className="text-text-tertiary shrink-0" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("searchDrones")}
+            className="w-full bg-transparent text-xs text-text-primary placeholder:text-text-tertiary outline-none"
+          />
+        </div>
+
+        <button
+          onClick={openDialog}
+          className="w-7 h-7 flex items-center justify-center bg-accent-primary/10 hover:bg-accent-primary transition-colors cursor-pointer group rounded"
+          title={t("addDrone")}
+        >
+          <Plus size={13} className="text-accent-primary group-hover:text-bg-primary transition-colors" />
+        </button>
+
+        <button
+          onClick={onToggleCollapse}
+          className="w-7 h-7 flex items-center justify-center hover:bg-bg-tertiary transition-colors cursor-pointer group rounded"
+          title={t("collapsePanel")}
+        >
+          <ChevronUp size={13} className="text-text-tertiary group-hover:text-text-secondary transition-colors" />
+        </button>
+      </div>
     </div>
   );
 }

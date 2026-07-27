@@ -16,6 +16,7 @@ import type { FleetDrone, SuiteType } from "@/lib/types";
 
 interface CompactInfoCardsProps {
   drone: FleetDrone;
+  filterTab?: "all" | "health" | "vehicle" | "identity" | "stats";
 }
 
 type EditSection = "vehicle" | "identity" | "stats" | null;
@@ -124,7 +125,7 @@ function EditSelect({ label, value, onChange, options }: {
   );
 }
 
-export function CompactInfoCards({ drone }: CompactInfoCardsProps) {
+export function CompactInfoCards({ drone, filterTab = "all" }: CompactInfoCardsProps) {
   const t = useTranslations("flightInfo");
   const jurisdiction = useSettingsStore((s) => s.jurisdiction);
 
@@ -210,9 +211,15 @@ export function CompactInfoCards({ drone }: CompactInfoCardsProps) {
     setEditingSection(null);
   }
 
+  const showHealth = filterTab === "all" || filterTab === "health";
+  const showVehicle = filterTab === "all" || filterTab === "vehicle";
+  const showIdentity = filterTab === "all" || filterTab === "identity";
+  const showStats = filterTab === "all" || filterTab === "stats";
+
   return (
     <div className="bg-transparent">
       {/* Health — READ-ONLY */}
+      {showHealth && (
       <Section title={t("health")}>
         <SensorHealthBar compact />
         <div className="grid grid-cols-2 gap-2 mt-2">
@@ -229,8 +236,10 @@ export function CompactInfoCards({ drone }: CompactInfoCardsProps) {
           <BatteryBar percentage={drone.battery?.remaining ?? 0} />
         </div>
       </Section>
+      )}
 
       {/* Vehicle — EDITABLE */}
+      {showVehicle && (
       <Section
         title={t("vehicleInfo")}
         editable
@@ -264,8 +273,10 @@ export function CompactInfoCards({ drone }: CompactInfoCardsProps) {
           </div>
         )}
       </Section>
+      )}
 
       {/* Identity — EDITABLE */}
+      {showIdentity && (
       <Section
         title={t("identity")}
         editable
@@ -290,8 +301,10 @@ export function CompactInfoCards({ drone }: CompactInfoCardsProps) {
           </div>
         )}
       </Section>
+      )}
 
       {/* Stats — EDITABLE */}
+      {showStats && (
       <Section
         title={t("statistics")}
         editable
@@ -311,11 +324,12 @@ export function CompactInfoCards({ drone }: CompactInfoCardsProps) {
           <div className="grid grid-cols-2 gap-2">
             <MetricCell label={t("totalFlights")} value={metadata?.totalFlights ?? 0} />
             <MetricCell label={t("hours")} value={metadata?.totalHours ?? 0} unit="h" />
-            <MetricCell label={t("enrolled")} value={formatDate(metadata?.enrolledAt ?? Date.now() - 30 * 24 * 60 * 60 * 1000)} />
+            <MetricCell label={t("enrolled")} value={metadata?.enrolledAt ? formatDate(metadata.enrolledAt) : "—"} />
             <MetricCell label={t("lastFlight")} value={formatDate(drone.lastHeartbeat)} />
           </div>
         )}
       </Section>
+      )}
     </div>
   );
 }

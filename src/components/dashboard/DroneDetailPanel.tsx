@@ -79,12 +79,10 @@ export function DroneDetailPanel({ droneId, onClose }: DroneDetailPanelProps) {
   const displayName = metadata?.displayName ?? drone?.name ?? droneId;
 
   // Consume pending detail tab from Cmd+K navigation
-  useEffect(() => {
-    if (pendingDetailTab) {
-      setActiveTab(pendingDetailTab);
-      setPendingDetailTab(null);
-    }
-  }, [pendingDetailTab, setPendingDetailTab]);
+  if (pendingDetailTab && activeTab !== pendingDetailTab) {
+    setActiveTab(pendingDetailTab);
+    setPendingDetailTab(null);
+  }
 
   // Exit immersive mode if tab changes away from overview
   useEffect(() => {
@@ -197,33 +195,23 @@ export function DroneDetailPanel({ droneId, onClose }: DroneDetailPanelProps) {
             ))}
           </div>
 
-          <span className="text-[10px] font-mono text-text-tertiary ml-auto shrink-0">
-            ID: {drone.id === "offline-drone" ? "--" : drone.id}
-          </span>
-          {drone.id !== "offline-drone" && (
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={<Trash2 size={12} />}
-              onClick={() => setDeleteOpen(true)}
-              className="text-status-error hover:text-status-error"
-            />
-          )}
-          {isConnected && <NavStatePill />}
-          {isConnected && <TrafficPill />}
-          {isConnected && <ConnectionQualityMeter />}
           {isConnected && (
-            <Button
-              variant="danger"
-              size="sm"
-              icon={<RotateCcw size={12} />}
-              onClick={() => {
-                const protocol = useDroneManager.getState().getSelectedProtocol();
-                if (protocol) protocol.reboot();
-              }}
-            >
-              {t("rebootFc")}
-            </Button>
+            <div className="ml-auto flex items-center gap-2 shrink-0">
+              <NavStatePill />
+              <TrafficPill />
+              <ConnectionQualityMeter />
+              <Button
+                variant="danger"
+                size="sm"
+                icon={<RotateCcw size={12} />}
+                onClick={() => {
+                  const protocol = useDroneManager.getState().getSelectedProtocol();
+                  if (protocol) protocol.reboot();
+                }}
+              >
+                {t("rebootFc")}
+              </Button>
+            </div>
           )}
         </div>
       )}

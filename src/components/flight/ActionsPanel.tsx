@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  Power, ArrowUpFromLine, Home, ArrowDownToLine,
+  Power, PlaneTakeoff, PlaneLanding,
   Pause, Play, XOctagon, Skull, ClipboardCheck,
 } from "lucide-react";
 import { FollowMeButton } from "./FollowMeButton";
@@ -21,7 +21,11 @@ import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
 
 
-export function ActionsPanel() {
+interface ActionsPanelProps {
+  mode?: "quick" | "emergency" | "full";
+}
+
+export function ActionsPanel({ mode = "quick" }: ActionsPanelProps) {
   const t = useTranslations("flight");
   const selectedDroneId = useDroneManager((s) => s.selectedDroneId);
   const isConnected = useDroneManager((s) => selectedDroneId ? s.drones.has(selectedDroneId) : false);
@@ -72,31 +76,75 @@ export function ActionsPanel() {
     takeoffAlt,
   });
 
+  if (mode === "emergency") {
+    return (
+      <>
+        <div className={cn("p-3 bg-status-error/5 border border-status-error/30 rounded flex flex-col gap-2 transition-opacity duration-200", !isConnected && "opacity-50 pointer-events-none")}>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-status-error uppercase tracking-wider">
+            <XOctagon size={14} />
+            <span>Emergency Operations</span>
+          </div>
+          <p className="text-[10px] text-text-tertiary">
+            Use these safety overrides only during immediate flight hazards. Actions take effect instantly after confirmation.
+          </p>
+
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-1">
+              <Tooltip content="Abort Mission (Shift+X)" position="top">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="w-full h-9 font-semibold text-xs flex items-center justify-center gap-1.5"
+                  icon={<XOctagon size={14} />}
+                  onClick={() => setShowAbortConfirm(true)}
+                >
+                  {t("abort") || "ABORT MISSION"}
+                </Button>
+              </Tooltip>
+            </div>
+            <div className="flex-1">
+              <Tooltip content="Kill all motors immediately" position="top">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  icon={<Skull size={14} />}
+                  className="w-full h-9 font-semibold text-xs bg-red-800 hover:bg-red-700 border-red-600 flex items-center justify-center gap-1.5"
+                  onClick={() => setShowKillConfirm(true)}
+                >
+                  KILL MOTORS
+                </Button>
+              </Tooltip>
+            </div>
+          </div>
+        </div>
+
+        <ActionDialogs
+          showArmConfirm={showArmConfirm}
+          setShowArmConfirm={setShowArmConfirm}
+          showDisarmConfirm={showDisarmConfirm}
+          setShowDisarmConfirm={setShowDisarmConfirm}
+          showRthConfirm={showRthConfirm}
+          setShowRthConfirm={setShowRthConfirm}
+          showTakeoffConfirm={showTakeoffConfirm}
+          setShowTakeoffConfirm={setShowTakeoffConfirm}
+          showLandConfirm={showLandConfirm}
+          setShowLandConfirm={setShowLandConfirm}
+          showAbortConfirm={showAbortConfirm}
+          setShowAbortConfirm={setShowAbortConfirm}
+          showKillConfirm={showKillConfirm}
+          setShowKillConfirm={setShowKillConfirm}
+          showChecklist={showChecklist}
+          setShowChecklist={setShowChecklist}
+          checklistReady={checklistReady}
+          takeoffAlt={takeoffAlt}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <div className={cn("px-3 pt-3 pb-1.5 bg-transparent flex flex-col gap-1.5 transition-opacity duration-200", !isConnected && "opacity-50 pointer-events-none")}>
-        {/* Loadout selector (battery + equipment fitted for this flight) */}
-        <LoadoutSelector />
-
-        {/* Pre-Flight Checklist button */}
-        <Tooltip content="Open pre-flight checklist" position="right">
-          <button
-            onClick={() => setShowChecklist(true)}
-            className={cn(
-              "w-full flex items-center gap-2 px-2 py-1.5 text-[11px] font-medium transition-colors border",
-              checklistReady
-                ? "bg-status-success/10 border-status-success/30 text-status-success hover:bg-status-success/20"
-                : "bg-bg-tertiary border-border-default text-text-secondary hover:bg-bg-tertiary/80",
-            )}
-          >
-            <ClipboardCheck size={12} />
-            <span className="flex-1 text-left">{t("preFlightCheck")}</span>
-            <span className="text-[10px] font-mono">
-              {checklistProgress.checked}/{checklistProgress.total}
-            </span>
-          </button>
-        </Tooltip>
-
         <div className="flex items-center gap-1.5">
           {/* ARM / DISARM */}
           <div className="flex-1 [&>*]:w-full">
@@ -108,7 +156,7 @@ export function ActionsPanel() {
                 variant={isArmed ? "danger" : "primary"}
                 size="sm"
                 icon={<Power size={14} />}
-                className="w-full h-9 text-sm"
+                className="w-full h-9 text-sm font-semibold"
                 onClick={() => {
                   if (isArmed) setShowDisarmConfirm(true);
                   else setShowArmConfirm(true);
@@ -184,7 +232,7 @@ export function ActionsPanel() {
                 <Button
                   variant="secondary"
                   size="sm"
-                  icon={<Home size={14} />}
+                  icon={<PlaneLanding size={14} />}
                   className="w-full text-status-warning border-status-warning/30"
                   onClick={() => setShowRthConfirm(true)}
                 />
@@ -212,7 +260,7 @@ export function ActionsPanel() {
                     variant="secondary"
                     size="sm"
                     className="w-full"
-                    icon={<ArrowUpFromLine size={14} />}
+                    icon={<PlaneTakeoff size={14} />}
                     onClick={() => {
                       const alt = parseFloat(takeoffAlt);
                       if (isNaN(alt) || alt <= 0) return;
@@ -227,35 +275,39 @@ export function ActionsPanel() {
                     variant="secondary"
                     size="sm"
                     className="w-full"
-                    icon={<ArrowDownToLine size={14} />}
+                    icon={<PlaneLanding size={14} />}
                     onClick={() => setShowLandConfirm(true)}
                   />
                 </Tooltip>
               </div>
             </>
           )}
-          <div className="flex-1 [&>*]:w-full">
-            <Tooltip content="Abort (Shift+X)" position="left">
-              <Button
-                variant="danger"
-                size="sm"
-                className="w-full"
-                icon={<XOctagon size={14} />}
-                onClick={() => setShowAbortConfirm(true)}
-              />
-            </Tooltip>
-          </div>
-          <div className="flex-1 [&>*]:w-full">
-            <Tooltip content="Kill motors" position="left">
-              <Button
-                variant="danger"
-                size="sm"
-                icon={<Skull size={14} />}
-                className="w-full bg-red-800 hover:bg-red-700 border-red-600"
-                onClick={() => setShowKillConfirm(true)}
-              />
-            </Tooltip>
-          </div>
+          {mode === "full" && (
+            <>
+              <div className="flex-1 [&>*]:w-full">
+                <Tooltip content="Abort (Shift+X)" position="left">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    className="w-full"
+                    icon={<XOctagon size={14} />}
+                    onClick={() => setShowAbortConfirm(true)}
+                  />
+                </Tooltip>
+              </div>
+              <div className="flex-1 [&>*]:w-full">
+                <Tooltip content="Kill motors" position="left">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    icon={<Skull size={14} />}
+                    className="w-full bg-red-800 hover:bg-red-700 border-red-600"
+                    onClick={() => setShowKillConfirm(true)}
+                  />
+                </Tooltip>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Follow-me mode */}

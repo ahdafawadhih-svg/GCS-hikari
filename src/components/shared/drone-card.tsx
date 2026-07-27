@@ -14,6 +14,7 @@ interface DroneCardProps {
   drone: FleetDrone;
   selected?: boolean;
   onClick?: (id: string) => void;
+  compact?: boolean;
 }
 
 const statusToBadgeVariant: Record<DroneStatus, "success" | "warning" | "error" | "info" | "neutral"> = {
@@ -40,7 +41,7 @@ const gpsFixLabel: Record<number, string> = {
   3: "3D",
 };
 
-export function DroneCard({ drone, selected, onClick }: DroneCardProps) {
+export function DroneCard({ drone, selected, onClick, compact = false }: DroneCardProps) {
   const displayName = useDroneMetadataStore((s) => s.profiles[drone.id]?.displayName) ?? drone.name;
   const tStatus = useTranslations("status");
   const sats = drone.gps?.satellites ?? 0;
@@ -48,29 +49,36 @@ export function DroneCard({ drone, selected, onClick }: DroneCardProps) {
   const lowSats = sats < 6 && fixType > 0;
 
   return (
-    <Card className={cn(selected && "border-accent-primary bg-accent-primary/5")} onClick={() => onClick?.(drone.id)}>
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2">
+    <Card
+      padding={!compact}
+      className={cn(
+        selected && "border-accent-primary bg-accent-primary/5",
+        compact && "p-2"
+      )}
+      onClick={() => onClick?.(drone.id)}
+    >
+      <div className={cn("flex items-start justify-between", compact ? "mb-1" : "mb-2")}>
+        <div className="flex items-center gap-1.5">
           <StatusDot status={statusToDot[drone.status]} />
-          <span className="text-sm font-semibold text-text-primary">{displayName}</span>
+          <span className={cn("font-semibold text-text-primary truncate max-w-[120px]", compact ? "text-xs" : "text-sm")}>{displayName}</span>
           {drone.source === "cloud" && (
-            <Cloud size={12} className="text-accent-primary" />
+            <Cloud size={10} className="text-accent-primary shrink-0" />
           )}
           {drone.runtimeMode === "lite" && (
-            <Badge variant="info" className="text-[10px]">
+            <Badge variant="info" className="text-[9px] px-1 py-0 h-3.5">
               {tStatus("runtimeMode.lite")}
             </Badge>
           )}
           {drone.profile === "ground-station" && (
             <span title={drone.role ? `Ground station — ${drone.role}` : "Ground station"}>
-              <Badge variant="info" className="text-[10px]">
-                GS{drone.role && drone.role !== "direct" ? ` / ${drone.role}` : ""}
+              <Badge variant="info" className="text-[9px] px-1 py-0 h-3.5">
+                GS
               </Badge>
             </span>
           )}
           {drone.profile === "compute" && (
             <span title="Compute node">
-              <Badge variant="info" className="text-[10px]">
+              <Badge variant="info" className="text-[9px] px-1 py-0 h-3.5">
                 CMP
               </Badge>
             </span>
@@ -83,14 +91,14 @@ export function DroneCard({ drone, selected, onClick }: DroneCardProps) {
                   : "Native GStreamer air pipeline"
               }
             >
-              <Badge variant="info" className="text-[10px]">
+              <Badge variant="info" className="text-[9px] px-1 py-0 h-3.5">
                 GST
               </Badge>
             </span>
           )}
           {drone.attachedDisplayType === "spi-lcd" && (
             <span title='Local SPI LCD attached (Waveshare 3.5" / ILI9486)'>
-              <Badge variant="neutral" className="text-[10px]">
+              <Badge variant="neutral" className="text-[9px] px-1 py-0 h-3.5">
                 LCD
               </Badge>
             </span>
@@ -104,9 +112,9 @@ export function DroneCard({ drone, selected, onClick }: DroneCardProps) {
                   navigator.clipboard?.writeText(drone.manualMavlinkWsUrl);
                 }
               }}
-              className="cursor-pointer"
+              className="cursor-pointer shrink-0"
             >
-              <Badge variant="success" className="text-[10px]">
+              <Badge variant="success" className="text-[9px] px-1 py-0 h-3.5">
                 Direct
               </Badge>
             </span>
@@ -122,29 +130,29 @@ export function DroneCard({ drone, selected, onClick }: DroneCardProps) {
                   ? "Profile picked by tiebreaker. Confirm in setup."
                   : "Profile fell back to default. Confirm in setup."
               }
-              className="inline-flex h-4 items-center rounded-sm bg-status-warning/20 px-1 font-mono text-[10px] lowercase text-status-warning"
+              className="inline-flex h-3.5 items-center rounded-sm bg-status-warning/20 px-0.5 font-mono text-[9px] lowercase text-status-warning shrink-0"
             >
               auto
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5">
-          <Badge variant={drone.armState === "armed" ? "warning" : "neutral"}>
+        <div className="flex items-center gap-1 shrink-0">
+          <Badge variant={drone.armState === "armed" ? "warning" : "neutral"} className="text-[9px] px-1 py-0 h-3.5">
             {drone.armState}
           </Badge>
-          <Badge variant={statusToBadgeVariant[drone.status]}>{drone.status.replace("_", " ")}</Badge>
+          <Badge variant={statusToBadgeVariant[drone.status]} className="text-[9px] px-1 py-0 h-3.5">{drone.status.replace("_", " ")}</Badge>
         </div>
       </div>
-      <BatteryBar percentage={drone.battery?.remaining ?? 0} className="mb-2" />
-      <div className="flex items-center justify-between text-[10px] text-text-tertiary">
-        <span className="font-mono">{drone.flightMode}</span>
-        <div className="flex items-center gap-2">
+      <BatteryBar percentage={drone.battery?.remaining ?? 0} className={compact ? "mb-1" : "mb-2"} />
+      <div className="flex items-center justify-between text-[9px] text-text-tertiary">
+        <span className="font-mono truncate max-w-[80px]">{drone.flightMode}</span>
+        <div className="flex items-center gap-1.5 min-w-0">
           {drone.gps && (
-            <span className={cn("font-mono", lowSats ? "text-status-warning" : "text-text-tertiary")}>
-              {gpsFixLabel[fixType] ?? `Fix ${fixType}`} {sats} sats
+            <span className={cn("font-mono shrink-0", lowSats ? "text-status-warning" : "text-text-tertiary")}>
+              {gpsFixLabel[fixType] ?? `Fix ${fixType}`} {sats}s
             </span>
           )}
-          {drone.suiteName && <span className="truncate ml-1">{drone.suiteName}</span>}
+          {drone.suiteName && <span className="truncate ml-0.5 max-w-[60px]">{drone.suiteName}</span>}
         </div>
       </div>
     </Card>
